@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="play_ctrl_padding">12dp</dimen>
+    <dimen name="play_ctrl_text_size">12sp</dimen>
+    <dimen name="play_title_text_size">25sp</dimen>
+</resources>

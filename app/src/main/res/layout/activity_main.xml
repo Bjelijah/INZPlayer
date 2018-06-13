@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+   >
+    <data>
+        <variable
+            name="vm"
+            type="com.inz.model.main.MainViewModel"/>
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_bk_dark">
+        <com.inz.activity.view.PlayGLTextureView
+            android:id="@+id/play_gl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:onTouchListener="@{true}"
+            />
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="@{vm.MWaitVisibility}"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="@{vm.MStateVisibility}"
+            app:play_state_src="@{vm.MPlayState}"
+            />
+
+
+        <include
+            android:id="@+id/play_title"
+            layout="@layout/view_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            app:vm="@{vm}"
+            />
+
+
+
+        <include
+            android:id="@+id/play_ctrl"
+            layout="@layout/view_ctrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:vm = "@{vm}"
+            />
+
+    </FrameLayout>
+
+</layout>

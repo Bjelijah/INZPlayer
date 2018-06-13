@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.inz.model.main.MainViewModel"/>
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/main_bk_dark"
+        android:paddingStart="@dimen/play_ctrl_padding"
+        android:paddingEnd="@dimen/play_ctrl_padding"
+        android:visibility="@{vm.MTitleVisibility}">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/play_title_text_size"
+            android:text="@{vm.MTitleText}"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_folder_open_white"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:background="@color/transparent"
+            android:onClick="@{vm.onFileOpenClick}"/>
+
+
+
+    </RelativeLayout>
+
+
+
+</layout>
