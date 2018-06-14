@@ -11,11 +11,14 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import com.howellsdk.utils.ThreadUtil
+import com.inz.action.Config
 import com.inz.inzplayer.BasePlayer
 import com.inz.inzplayer.R
 import com.inz.model.BaseViewModel
 import com.inz.model.ModelMgr
 import io.reactivex.functions.Action
+import java.util.concurrent.TimeUnit
 
 class MainViewModel(private var mContext:Context): BaseViewModel {
 
@@ -35,7 +38,7 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
     val mPlayState       = ObservableField<Boolean>(true)
     var mActivity :Activity ?= null
     var mPlayer:BasePlayer  ?= null
-
+    val F_TIME = 1L//刷新率  s
 
     fun setContext(c:Context){
         mContext = c
@@ -56,13 +59,15 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
         mPlayer = ModelMgr.getLocalPlayerInstance()
                 .setURI(path)
                 .registListener({bInit->
-
+                    if(bInit)playView()
                 },{bDeinit->
 
                 },{bPlay->
-
+                    //todo init info   start time task
+                    if(bPlay)startTimeTask()
                 },{bStop->
-
+                    //todo stop time task
+                    if(bStop)stopTimeTask()
                 })
                 .setURI(path)
                 .init(-1,path)
@@ -84,6 +89,28 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             mActivity?.startActivityForResult(intent,1)
         }
+    }
+
+    fun playView(){
+        mPlayer?.play(Config.CAM_IS_SUB)
+    }
+
+    fun pauseView(){
+        mPlayer?.pause()
+    }
+
+    fun stopView(){
+        mPlayer?.stop()
+    }
+
+    fun startTimeTask(){
+        ThreadUtil.scheduledSingleThreadStart({
+
+        },0,F_TIME,TimeUnit.SECONDS)
+    }
+
+    fun stopTimeTask(){
+
     }
 
 
