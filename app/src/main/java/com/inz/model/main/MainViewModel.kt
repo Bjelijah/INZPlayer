@@ -11,6 +11,9 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import com.howellsdk.api.ApiManager
+import com.howellsdk.api.HWPlayApi
+import com.howellsdk.utils.RxUtil
 import com.howellsdk.utils.ThreadUtil
 import com.inz.action.Config
 import com.inz.inzplayer.BasePlayer
@@ -39,7 +42,7 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
     var mActivity :Activity ?= null
     var mPlayer:BasePlayer  ?= null
     val F_TIME = 1L//刷新率  s
-
+    var mWaiteNum = 0
     fun setContext(c:Context){
         mContext = c
     }
@@ -54,23 +57,26 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
     }
 
     fun setUriAndPlay(path:String){
+        Log.i("123","path=$path")
         var title = path.split("/")
         mTitleText.set(title[title.lastIndex])
         mPlayer = ModelMgr.getLocalPlayerInstance()
-                .setURI(path)
                 .registListener({bInit->
                     if(bInit)playView()
                 },{bDeinit->
 
                 },{bPlay->
                     //todo init info   start time task
-                    if(bPlay)startTimeTask()
+                    stopTimeTask()
+                    if(bPlay)startTimeTask(ApiManager.getInstance().localService)
                 },{bStop->
                     //todo stop time task
                     if(bStop)stopTimeTask()
                 })
-                .setURI(path)
                 .init(-1,path)
+
+
+
 
 
 
@@ -103,14 +109,43 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
         mPlayer?.stop()
     }
 
-    fun startTimeTask(){
-        ThreadUtil.scheduledSingleThreadStart({
+    private fun onTime(speed:Long,bWait:Boolean){
+        RxUtil.doInUIThread(object :RxUtil.RxSimpleTask<Void>(){
+            override fun doTask() {
+                if (bWait){
 
+                }else{
+                    //just progress,title  vanish
+                    mWaitVisibility.set(View.GONE)
+                    mTitleVisibility.set(View.GONE)
+                }
+
+            }
+        })
+    }
+
+    private fun startTimeTask(server:HWPlayApi){
+        ThreadUtil.scheduledSingleThreadStart({
+            var bWaite        = true
+            var streamLen = server.streamLen
+            Log.i("123","streamLen=$streamLen")
+            var speed   = streamLen*8/F_TIME
+            if (streamLen!=0){
+                bWaite = false
+                mWaiteNum = 0
+            }else{
+                mWaiteNum++
+                if (mWaiteNum==3){
+                    bWaite = true
+                    mWaiteNum = 0
+                }
+            }
+            onTime(speed,bWaite)
         },0,F_TIME,TimeUnit.SECONDS)
     }
 
-    fun stopTimeTask(){
-
+    private fun stopTimeTask(){
+        ThreadUtil.scheduledSingleThreadShutDown()
     }
 
 
