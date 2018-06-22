@@ -16,47 +16,42 @@
         android:background="@color/transparent">
 
 
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/play_ctrl_padding"
-            android:paddingEnd="@dimen/play_ctrl_padding"
-            android:orientation="horizontal">
+            android:padding="@dimen/play_ctrl_padding">
             <TextView
+                android:id="@+id/view_ctrl_beg_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/play_ctrl_text_size"
-                android:textColor="@color/white_highlight"
+                android:textColor="@color/red"
                 android:text="@{vm.MCtrlBeg}"
-
+                android:layout_alignParentLeft="true"
                 />
-
+            <TextView
+                android:id="@+id/view_ctrl_end_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/play_ctrl_text_size"
+                android:textColor="@color/red"
+                android:text="@{vm.MCtrlEnd}"
+                android:layout_alignParentEnd="true"
+                />
             <android.support.v7.widget.AppCompatSeekBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-
-                android:textSize="@dimen/play_ctrl_text_size"
-                android:textColor="@color/white_highlight"
-                android:text="@{vm.MCtrlEnd}"
-
+                android:layout_toRightOf="@id/view_ctrl_beg_tv"
+                android:layout_toLeftOf="@id/view_ctrl_end_tv"
+                android:onProgressChanged="@{vm.onProgressChanged}"
+                android:progress="@{vm.MProcess}"
+                android:max="@{vm.MProcessMax}"
+                android:onStartTrackingTouch="@{vm.onStartTrackingTouch}"
+                android:onStopTrackingTouch="@{vm.onStopTrackingTouch}"
                 />
 
-        </LinearLayout>
-
-
-
+        </RelativeLayout>
 
     </LinearLayout>
-
-
-
 
 </layout>

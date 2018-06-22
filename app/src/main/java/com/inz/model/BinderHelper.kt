@@ -4,6 +4,8 @@ import android.databinding.BindingAdapter
 import android.databinding.BindingConversion
 import android.databinding.ViewDataBinding
 import android.view.View
+import com.howellsdk.api.player.ZoomableTextureView
+import com.inz.activity.view.PlayGLTextureView
 import com.inz.inzplayer.BR
 import com.inz.inzplayer.R
 import com.inz.utils.DebugLog
@@ -27,12 +29,18 @@ object BinderHelper {
     @BindingAdapter("onTouchListener")
     @JvmStatic
     fun setOnTouchListener(v:View,b:Boolean){
-        v.setOnTouchListener({ v,event->
+        v.setOnTouchListener { v, event->
             when(v.id){
                 R.id.play_gl->ModelMgr.getMainViewModelInstance(ModelMgr.mContext!!).onGlTouch(v,event)
                 else->false
             }
-        })
+        }
+    }
+
+    @BindingAdapter("onZoomTouchListener")
+    @JvmStatic
+    fun setOnZoomTouchListener(v: PlayGLTextureView,cb: ZoomableTextureView.OnTouchCb){
+        v.setOnTouchCallback(cb)
     }
 
 

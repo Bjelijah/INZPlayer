@@ -38,5 +38,11 @@ abstract class BasePlayer {
     abstract fun deinit():BasePlayer
     abstract fun play(isSub:Boolean):BasePlayer
     abstract fun pause():BasePlayer
+    abstract fun isPause():Boolean
     abstract fun stop():BasePlayer
+
+    open fun getTotalFrame():Int = 0
+    open fun getTotalMsec() :Int = 0
+    open fun setPos(pos:Int){}
+
 }

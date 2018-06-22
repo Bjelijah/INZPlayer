@@ -22,6 +22,7 @@ class LocalPlayer:BasePlayer() {
         Observable.create(ObservableOnSubscribe<Boolean> {
             ApiManager.getInstance().getLocalService(crypto,uri)
                     .bindCam()
+            ApiManager.getInstance().localService.setUri(uri)
             it.onNext(true)
         })
                 .subscribeOn(Schedulers.io())
@@ -75,6 +76,13 @@ class LocalPlayer:BasePlayer() {
         return this
     }
 
+    override fun getTotalFrame(): Int = ApiManager.getInstance().localService.totalFrame
 
+    override fun getTotalMsec(): Int = ApiManager.getInstance().localService.totalMsec
 
+    override fun setPos(pos: Int) {
+        ApiManager.getInstance().localService.pos = pos
+    }
+
+    override fun isPause(): Boolean = ApiManager.getInstance().localService.isPause
 }

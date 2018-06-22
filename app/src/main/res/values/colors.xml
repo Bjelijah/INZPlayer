@@ -24,4 +24,5 @@
     <color name="main_bk_dark">#212121</color>
     <color name="main_bk_light">#303030</color>
     <color name="main_border">#Ffc107</color>
+    <color name="main_bk_dark_tr">#99212121</color>
 </resources>
