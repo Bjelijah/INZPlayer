@@ -39,7 +39,7 @@ object BinderHelper {
 
     @BindingAdapter("onZoomTouchListener")
     @JvmStatic
-    fun setOnZoomTouchListener(v: PlayGLTextureView,cb: ZoomableTextureView.OnTouchCb){
+    fun setOnZoomTouchListener(v: PlayGLTextureView,cb: ZoomableTextureView.OnTouchCb?){
         v.setOnTouchCallback(cb)
     }
 

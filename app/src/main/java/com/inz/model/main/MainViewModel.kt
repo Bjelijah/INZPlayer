@@ -30,21 +30,27 @@ import java.util.concurrent.TimeUnit
 class MainViewModel(private var mContext:Context): BaseViewModel {
     val PLAY_STATE_PLAY = 0x01
     val PLAY_STATE_STOP = 0x02
-
+    private var mLastClickTime = 0L
+    val MIN_CLICK_DELAY_TIME = 200
     val mGestureDetector = GestureDetector(mContext,object :GestureDetector.SimpleOnGestureListener(){
+
         override fun onSingleTapUp(e: MotionEvent?): Boolean {
-            //todo  ctrl bar visibility
+            Log.e("123","on single tap")
+            return super.onSingleTapUp(e)
+        }
+
+        override fun onDoubleTap(e: MotionEvent?): Boolean {
+            Log.e("123","on Double tap")
             if (mState == PLAY_STATE_PLAY) {
                 pauseView()
                 mTitleVisibility.set(if (mPlayer?.isPause() == true) View.VISIBLE else View.GONE)
             }
-            return super.onSingleTapUp(e)
+            return super.onDoubleTap(e)
         }
 
         override fun onDown(e: MotionEvent?): Boolean {
             return true
         }
-
     })
     val mWaitVisibility  = ObservableField<Int>(View.VISIBLE)
     val mCtrlVisibility  = ObservableField<Int>(View.VISIBLE)
@@ -84,11 +90,11 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
     }
 
     val onZoomTouchListener = ZoomableTextureView.OnTouchCb{view,event->
-        Log.i("123","on zoom touch listener")
-        if (mState == PLAY_STATE_PLAY) {
+        if (isDoubleClick() && mState ==  PLAY_STATE_PLAY){
             pauseView()
             mTitleVisibility.set(if (mPlayer?.isPause() == true) View.VISIBLE else View.GONE)
         }
+        false
     }
 
     var mActivity :Activity ?= null
@@ -103,6 +109,9 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
     }
 
     override fun onCreate() {
+        initUi()
+
+
     }
 
     override fun onDestory() {
@@ -115,8 +124,6 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
         Log.i("123","path=$path")
         var title = path.split("/")
         mTitleText.set(title[title.lastIndex])
-        initUi()
-
         Log.i("123","path=$path")
         mPlayer = ModelMgr.getLocalPlayerInstance()
                 .registListener({ bInit ->
@@ -156,6 +163,7 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
             var intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "*/*"
             intent.addCategory(Intent.CATEGORY_OPENABLE)
+//            intent.setDataAndType()
             mActivity?.startActivityForResult(intent,1)
         }
     }
@@ -179,6 +187,9 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
         mProcess.set(0)
         mProcessMax.set(0)
         mIsUser = false
+        mWaitVisibility.set(View.VISIBLE)
+        mTitleVisibility.set(View.VISIBLE)
+        mTitleText.set(mContext.getString(R.string.title_file_no))
     }
 
     private fun initInfo(){
@@ -195,15 +206,22 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
             }
 
             override fun doInUIThread() {
-
                 mProcessMax.set(mTotalFrame)
                 mCtrlEnd.set(mEndTime)
-
-
             }
 
 
         })
+    }
+
+    private fun isDoubleClick():Boolean{
+        val curClickTime = System.currentTimeMillis()
+        var flag = false
+        if (curClickTime - mLastClickTime <= MIN_CLICK_DELAY_TIME){
+            flag = true
+        }
+        mLastClickTime = curClickTime
+        return flag
     }
 
     private fun onTime(speed:Long,bWait:Boolean){
@@ -217,9 +235,7 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
                         mWaitVisibility.set(View.GONE)
                         mTitleVisibility.set(View.GONE)
                     }
-
                 }
-
             }
         })
     }
@@ -228,7 +244,6 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
         ThreadUtil.scheduledSingleThreadStart({
             var bWaite        = true
             var streamLen = server.streamLen
-//            Log.i("123","streamLen=$streamLen")
             var speed   = streamLen*8/F_TIME
             if (streamLen!=0){
                 bWaite = false
@@ -273,7 +288,6 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity?.checkSelfPermission(
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             activity?.requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),1)
-            return true
         }
         return true
     }

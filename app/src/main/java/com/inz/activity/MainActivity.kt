@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.TextUtils
 import android.util.Log
 import com.inz.inzplayer.R
 import com.inz.model.BaseViewModel
@@ -21,19 +22,22 @@ class MainActivity:BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i("123","~~~~~~~~~~on create activity")
         (getViewModel() as MainViewModel).setActivity(this)
+        getFile()
     }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         var uri = data?.data
-        var filePath = getRealPathFromUri(uri!!)
+        var filePath = getRealPathFromUri(uri)
         ModelMgr.getMainViewModelInstance(this).setUriAndPlay(filePath)
     }
 
 
-    private fun getRealPathFromUri(contentUri: Uri):String{
+    private fun getRealPathFromUri(contentUri: Uri?):String{
+        if (contentUri==null)return ""
         var cursor = contentResolver.query(contentUri,null,null,null,null)
         var res = ""
         if (cursor.moveToFirst()){
@@ -42,5 +46,15 @@ class MainActivity:BaseActivity() {
         }
         cursor.close()
         return res
+    }
+
+
+    private fun getFile(){
+        if (TextUtils.equals(intent?.action?:"",Intent.ACTION_VIEW)){
+            Log.i("123"," get File set uri and play ${intent.data.path}")
+            ModelMgr.getMainViewModelInstance(this).setUriAndPlay(intent.data.path)
+        }else{
+            Log.e("123","getFile   intent error")
+        }
     }
 }
