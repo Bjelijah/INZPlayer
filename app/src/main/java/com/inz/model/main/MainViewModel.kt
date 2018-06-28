@@ -121,13 +121,13 @@ class MainViewModel(private var mContext:Context): BaseViewModel {
     }
 
     fun setUriAndPlay(path:String){
+        stopView()
         Log.i("123","path=$path")
         var title = path.split("/")
         mTitleText.set(title[title.lastIndex])
         Log.i("123","path=$path")
         mPlayer = ModelMgr.getLocalPlayerInstance()
                 .registListener({ bInit ->
-
                     if (bInit) playView()
                 }, { bDeinit ->
 
